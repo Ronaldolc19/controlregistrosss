@@ -1,0 +1,30 @@
+// Variables de diseño moderno
+$primary-dark: #0f172a;
+$accent-blue: #3b82f6;
+$glass-bg: rgba(255, 255, 255, 0.8);
+
+body {
+    background: radial-gradient(circle at top right, #f1f5f9, #e2e8f0);
+    min-height: 100vh;
+}
+
+.bento-card {
+    background: $glass-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5rem;
+    transition: all 0.3s ease;
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
