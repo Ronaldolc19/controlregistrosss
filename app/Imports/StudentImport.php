@@ -6,19 +6,28 @@ use App\Models\Student;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Carbon\Carbon;
 
 class StudentImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 {
     /**
-     * Convierte el número serial de Excel a objeto de fecha
+     * Convierte el número serial de Excel a objeto de fecha y limpia los ceros
      */
     private function transformDate($value)
     {
         if (empty($value)) return null;
+        
         try {
-            return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+            // Si es un número serial de Excel, lo convertimos y formateamos a Y-m-d
+            $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+            return $date->format('Y-m-d'); 
         } catch (\Exception $e) {
-            return $value; // Si no es serial, lo intentamos pasar como string
+            // Si no es serial (es un string como 1/26/2026), usamos Carbon para normalizarlo
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Exception $e2) {
+                return null;
+            }
         }
     }
 
@@ -29,8 +38,7 @@ class StudentImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return null;
         }
 
-        // Usamos updateOrCreate para que si el alumno ya existe (por num_cuenta), 
-        // actualice los datos nuevos en lugar de fallar.
+        // Usamos updateOrCreate para evitar duplicados por número de cuenta
         return Student::updateOrCreate(
             ['num_cuenta' => (string)$row['num_de_cuenta']], // Buscador único
             [
@@ -52,8 +60,11 @@ class StudentImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                 'semestre'                 => $row['semestre'],
                 'nivel'                    => $row['nivel'] ?? 'LICENCIATURA',
                 'perfil_profesional_carrera' => $row['perfil_profesional_carrera'],
+                
+                // Aplicamos la transformación para limpiar los ceros 00:00:00
                 'periodo_inicio'           => $this->transformDate($row['periodo_inicio']),
                 'periodo_termino'          => $this->transformDate($row['periodo_termino']),
+                
                 'sexo'                     => $row['sexo'],
                 'edad'                     => $row['edad'],
                 'promedio'                 => $row['promedio'],

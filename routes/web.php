@@ -7,64 +7,52 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\BajaController;
 use App\Http\Controllers\LiberadoController;
+use App\Http\Controllers\ConstanciaController;
 
+// --- ACCESO PÚBLICO ---
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Auth::routes();
+// Desactivamos el registro público para que solo el admin creado por Seeder tenga acceso
+Auth::routes(['register' => false]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::post('/importar-inscripcion', [ImportController::class, 'importInscripcion'])
-        ->name('import.inscripcion');
-// Ruta para cargar el Dataset de Bajas
-Route::post('/importar-bajas', [ImportController::class, 'importBajas'])
-    ->name('import.bajas');
+// --- ACCESO RESTRINGIDO (SOLO ADMINISTRADOR) ---
+Route::middleware(['auth'])->group(function () {
 
-// Ruta para cargar el Dataset de Liberaciones (Opcional por ahora)
-Route::post('/importar-liberaciones', [ImportController::class, 'importLiberaciones'])
-    ->name('import.liberacion');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // --- MÓDULO DE ESTUDIANTES ---
-    // Listado, Ver, Editar y Eliminar
-Route::resource('students', StudentController::class);
-Route::post('/students/{id}/baja', [StudentController::class, 'marcarBaja'])->name('students.baja.manual');
-Route::post('/students/{id}/liberar', [StudentController::class, 'marcarLiberacion'])->name('students.liberar.manual');
-Route::get('/alumnos/liberados', [StudentController::class, 'indexLiberados'])->name('students.liberados.list');
-Route::get('/alumnos/bajas', [StudentController::class, 'indexBajas'])->name('students.bajas.list');
-Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    // --- MÓDULO DE IMPORTACIÓN (Excel/CSV) ---
+    Route::controller(ImportController::class)->group(function () {
+        Route::post('/importar-inscripcion', 'importInscripcion')->name('import.inscripcion');
+        Route::post('/importar-bajas', 'importBajas')->name('import.bajas');
+        Route::post('/importar-liberaciones', 'importLiberaciones')->name('import.liberacion');
+    });
+
+    // --- MÓDULO DE ESTUDIANTES (Inscritos) ---
+    // El Resource ya incluye index, create, store, show, edit, update, destroy
+    Route::resource('students', StudentController::class);
     
-// Apartado de Bajas
-Route::get('/students/bajas', [StudentController::class, 'indexBajas'])->name('students.bajas.list');
+    // Acciones específicas de Estudiantes
+    Route::controller(StudentController::class)->group(function () {
+        Route::post('/students/{id}/reactivar', 'reactivarEstudiante')->name('students.reactivar');
+        Route::post('/students/{id}/liberar', 'liberarManual')->name('students.liberar.manual');
+        Route::post('/students/{id}/baja', 'marcarBaja')->name('students.baja.manual');
+    });
 
-// Acción de Baja Manual
-Route::post('/students/{id}/baja-manual', [StudentController::class, 'marcarBaja'])->name('students.baja.manual');
+    // --- MÓDULO DE BAJAS ---
+    Route::resource('bajas', BajaController::class)->except(['create']);
 
-// Ver expediente individual
-Route::get('/students/{id}', [StudentController::class, 'show'])->name('students.show');
-Route::post('/students/{id}/reactivar', [StudentController::class, 'reactivarEstudiante'])->name('students.reactivar');
-Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    // --- MÓDULO DE LIBERACIONES ---
+    Route::resource('liberaciones', LiberadoController::class)->except(['create']);
 
-// Ruta para procesar la actualización de los datos (usa PUT o PATCH)
-Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
-// Listado de bajas
-Route::get('/bajas', [BajaController::class, 'index'])->name('bajas.index');
+    // --- MÓDULO DE CONSTANCIAS ---
+    Route::controller(ConstanciaController::class)->group(function () {
+        Route::get('/constancias', 'index')->name('constancias.index');
+        Route::get('/constancia/generar/{id_estudiante}', 'generarPDF')->name('constancia.generar');
+    });
 
-// Procesar una nueva baja (Desde el expediente del alumno)
-Route::post('/bajas/{id}', [BajaController::class, 'store'])->name('bajas.store');
+    Route::post('/sistema/reiniciar', [HomeController::class, 'reiniciarCiclo'])->name('sistema.reiniciar');
+    Route::get('/sistema/backup-sql', [HomeController::class, 'descargarBackupSQL'])->name('sistema.backup.sql');
 
-// Reactivar estudiante (Eliminar de la tabla de bajas)
-Route::delete('/bajas/{id}', [BajaController::class, 'destroy'])->name('bajas.destroy');
-Route::get('/liberaciones', [StudentController::class, 'indexLiberados'])->name('students.liberados');
-Route::get('/bajas/{id}', [BajaController::class, 'show'])->name('bajas.show');
-Route::get('/bajas/{id}/edit', [BajaController::class, 'edit'])->name('bajas.edit');
-Route::put('/bajas/{id}', [BajaController::class, 'update'])->name('bajas.update');
-Route::get('/liberaciones', [LiberadoController::class, 'index'])->name('liberaciones.index');
-// Ver detalle, editar y eliminar
-Route::get('/liberaciones/{id}', [LiberadoController::class, 'show'])->name('liberaciones.show');
-Route::get('/liberaciones/{id}/edit', [LiberadoController::class, 'edit'])->name('liberaciones.edit');
-Route::put('/liberaciones/{id}', [LiberadoController::class, 'update'])->name('liberaciones.update');
-Route::delete('/liberaciones/{id}', [LiberadoController::class, 'destroy'])->name('liberaciones.destroy');
-
-
-
+});

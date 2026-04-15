@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Liberado;
 use App\Models\Baja;
+use App\Models\Constancia;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -14,6 +16,65 @@ class StudentController extends Controller
     {
         $students = Student::orderBy('apellido_paterno', 'asc')->get();
         return view('students.index', compact('students'));
+    }
+    public function create()
+    {
+        return view('students.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            // Identificación única
+            'num_cuenta' => 'required|string|unique:students,num_cuenta',
+            
+            // Datos Institución
+            'clave_cct' => 'required|string',
+            'subsistema' => 'required|string',
+            'nombre_escuela' => 'required|string',
+            'direccion_escuela' => 'required|string',
+            'municipio_escuela' => 'required|string',
+            'telefono_escuela' => 'required|string',
+            'responsable_ss_escuela' => 'required|string',
+            'correo_escuela' => 'required|email',
+            'registro_estatal_ss' => 'required|string',
+
+            // Datos Alumno
+            'apellido_paterno' => 'required|string',
+            'apellido_materno' => 'required|string',
+            'nombre' => 'required|string',
+            'semestre' => 'required|string',
+            'nivel' => 'required|string',
+            'perfil_profesional_carrera' => 'required|string',
+            'periodo_inicio' => 'required|string',
+            'periodo_termino' => 'required|string',
+            'sexo' => 'required|string',
+            'edad' => 'required|integer',
+            'promedio' => 'required|string',
+            'porcentaje_cubierto_plan' => 'required|string',
+
+            // Datos Dependencia
+            'nombre_dependencia_receptora' => 'required|string',
+            'direccion_dependencia' => 'required|string',
+            'municipio_dependencia' => 'required|string',
+            'sector' => 'required|string',
+            'nombre_responsable_dependencia' => 'required|string',
+            'horario_servicio' => 'required|string',
+            'proyecto_participa' => 'required|string',
+            'ss_con_o_sin_beca' => 'required|string',
+            'monto_estimulo' => 'nullable|string', // Permite nulo según tu SQL
+
+            // Información Social
+            'habla_lengua_indigena' => 'required|string',
+            'cual_lengua' => 'nullable|string',
+            'tiene_discapacidad' => 'required|string',
+            'cual_discapacidad' => 'nullable|string',
+            'status' => 'INSCRIPCION',
+        ]);
+
+        Student::create($validated);
+
+        return redirect()->route('students.index')->with('success', 'Estudiante registrado correctamente.');
     }
 
     // Detalle del estudiante
@@ -32,26 +93,68 @@ class StudentController extends Controller
     }
 
     // ACTUALIZAR DATOS
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_estudiante)
     {
-        $student = Student::findOrFail($id);
+        // 1. Localizar al estudiante
+        $student = Student::where('id_estudiante', $id_estudiante)->firstOrFail();
 
-        // Validación exhaustiva basada en tu nueva vista estructurada
+        // 2. Validación exhaustiva basada en tu esquema (evita errores de SQL 'Field cannot be null')
         $request->validate([
-            'num_cuenta' => 'required|string|unique:students,num_cuenta,' . $id . ',id_estudiante',
-            'nombre' => 'required|string|max:255',
+            // Datos Escuela
+            'clave_cct' => 'required|string|max:255',
+            'subsistema' => 'required|string|max:255',
+            'nombre_escuela' => 'required|string|max:255',
+            'direccion_escuela' => 'required|string',
+            'municipio_escuela' => 'required|string|max:255',
+            'telefono_escuela' => 'required|string|max:255',
+            'responsable_ss_escuela' => 'required|string|max:255',
+            'correo_escuela' => 'required|email|max:255',
+            
+            // Datos Alumno
             'apellido_paterno' => 'required|string|max:255',
-            'perfil_profesional_carrera' => 'required|string',
-            'semestre' => 'required|integer|between:1,12',
-            'email' => 'nullable|email',
-            'curp' => 'nullable|string|size:18',
+            'apellido_materno' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'num_cuenta' => 'required|string|unique:students,num_cuenta,' . $student->id_estudiante . ',id_estudiante',
+            'registro_estatal_ss' => 'required|string|max:255',
+            'nivel' => 'required|string|max:255',
+            'semestre' => 'required|string|max:255',
+            'perfil_profesional_carrera' => 'required|string|max:255',
+            'periodo_inicio' => 'required|string|max:255',
+            'periodo_termino' => 'required|string|max:255',
+            'sexo' => 'required|string|max:255',
+            'edad' => 'required|integer|min:15',
+            'promedio' => 'required|string|max:255',
+            'porcentaje_cubierto_plan' => 'required|string|max:255',
+
+            // Dependencia
+            'nombre_dependencia_receptora' => 'required|string|max:255',
+            'direccion_dependencia' => 'required|string',
+            'municipio_dependencia' => 'required|string|max:255',
+            'sector' => 'required|string|max:255',
+            'nombre_responsable_dependencia' => 'required|string|max:255',
+            'horario_servicio' => 'required|string|max:255',
+            'proyecto_participa' => 'required|string|max:255',
+            'ss_con_o_sin_beca' => 'required|string|max:255',
+            'monto_estimulo' => 'nullable|string|max:255', // Permite NULL según tu tabla
+
+            // Socio-cultural
+            'habla_lengua_indigena' => 'required|string|max:255',
+            'cual_lengua' => 'nullable|string|max:255', // Permite NULL
+            'tiene_discapacidad' => 'required|string|max:255',
+            'cual_discapacidad' => 'required|string|max:255',
         ]);
 
-        // Actualizamos todos los campos enviados por el formulario
-        $student->update($request->all());
+        try {
+            // 3. Actualización masiva
+            $student->update($request->all());
 
-        return redirect()->route('students.index')
-            ->with('success', 'Los datos de ' . $student->nombre . ' se han actualizado correctamente.');
+            return redirect()->route('students.index')
+                            ->with('success', 'Expediente de ' . $student->nombre . ' actualizado correctamente.');
+
+        } catch (\Exception $e) {
+            // Captura errores de base de datos (por ejemplo, si falta un campo que pusimos como NO NULL)
+            return back()->withInput()->withErrors(['db_error' => 'Error técnico: ' . $e->getMessage()]);
+        }
     }
 
     // ELIMINAR REGISTRO
@@ -137,5 +240,43 @@ class StudentController extends Controller
     {
         $liberados = Liberado::with('estudiante')->orderBy('id_liberado', 'desc')->get();
         return view('students.liberados_list', compact('liberados'));
+    }
+    public function liberarManual(Request $request, $id)
+    {
+        $request->validate([
+            'modalidad_liberacion' => 'required'
+        ]);
+
+        $student = Student::findOrFail($id);
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Cambiamos el estatus del alumno
+            $student->update(['status' => 'LIBERACION']);
+
+            // 2. Registramos la liberación
+            Liberado::create([
+                'id_estudiante' => $student->id_estudiante,
+                'modalidad'     => $request->modalidad_liberacion,
+                'fecha_liberacion' => now(),
+            ]);
+
+            // 3. Creamos la constancia en estado PENDIENTE
+            // Asegúrate de que los nombres de las columnas coincidan con tu base de datos
+            Constancia::create([
+                'id_estudiante'   => $student->id_estudiante,
+                'estado_proceso'  => 'PENDIENTE', 
+                'tipo_documento'  => 'CONSTANCIA DE LIBERACION',
+                'fecha_registro'  => now(),
+            ]);
+
+            DB::commit();
+            return redirect()->route('students.index')->with('success', 'Liberación procesada y constancia en pendientes.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al procesar la liberación: ' . $e->getMessage());
+        }
     }
 }

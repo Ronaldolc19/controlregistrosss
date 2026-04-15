@@ -6,7 +6,7 @@
         <div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-1 small">
-                    <li class="breadcrumb-item"><a href="{{ route('students.bajas.list') }}" class="text-decoration-none text-danger">Bajas</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('bajas.index') }}" class="text-decoration-none text-danger">Bajas</a></li>
                     <li class="breadcrumb-item active">Editar Registro de Baja</li>
                 </ol>
             </nav>
@@ -14,7 +14,7 @@
                 <i class="bi bi-pencil-square me-2 text-warning"></i>Modificar Baja: <span class="text-muted">{{ $student->num_cuenta }}</span>
             </h2>
         </div>
-        <a href="{{ route('students.bajas.list') }}" class="btn btn-outline-secondary rounded-3 px-4">
+        <a href="{{ route('bajas.index') }}" class="btn btn-outline-secondary rounded-3 px-4">
             <i class="bi bi-x-circle me-1"></i> Cancelar
         </a>
     </div>

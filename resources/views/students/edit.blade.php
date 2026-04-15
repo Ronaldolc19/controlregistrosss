@@ -9,6 +9,24 @@
         </div>
     </div>
 
+    {{-- BLOQUE DE ALERTAS PERSONALIZADO --}}
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+                <div>
+                    <strong class="d-block">No se pudo guardar el registro:</strong>
+                    <ul class="mb-0 small">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <form action="{{ route('students.update', $student->id_estudiante) }}" method="POST">
         @csrf
         @method('PUT')
@@ -37,35 +55,35 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">CLAVE CCT</label>
-                            <input type="text" name="clave_cct" class="form-control bg-light border-0" value="{{ $student->clave_cct }}">
+                            <input type="text" name="clave_cct" class="form-control bg-light border-0" value="{{ old('clave_cct', $student->clave_cct) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">SUBSISTEMA</label>
-                            <input type="text" name="subsistema" class="form-control bg-light border-0" value="{{ $student->subsistema }}">
+                            <input type="text" name="subsistema" class="form-control bg-light border-0" value="{{ old('subsistema', $student->subsistema) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">NOMBRE DE ESCUELA</label>
-                            <input type="text" name="nombre_escuela" class="form-control bg-light border-0" value="{{ $student->nombre_escuela }}">
+                            <input type="text" name="nombre_escuela" class="form-control bg-light border-0" value="{{ old('nombre_escuela', $student->nombre_escuela) }}">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-bold text-muted small">DIRECCIÓN ESCUELA</label>
-                            <input type="text" name="direccion_escuela" class="form-control bg-light border-0" value="{{ $student->direccion_escuela }}">
+                            <input type="text" name="direccion_escuela" class="form-control bg-light border-0" value="{{ old('direccion_escuela', $student->direccion_escuela) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">MUNICIPIO ESCUELA</label>
-                            <input type="text" name="municipio_escuela" class="form-control bg-light border-0" value="{{ $student->municipio_escuela }}">
+                            <input type="text" name="municipio_escuela" class="form-control bg-light border-0" value="{{ old('municipio_escuela', $student->municipio_escuela) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">TELÉFONO ESCUELA</label>
-                            <input type="text" name="telefono_escuela" class="form-control bg-light border-0" value="{{ $student->telefono_escuela }}">
+                            <input type="text" name="telefono_escuela" class="form-control bg-light border-0" value="{{ old('telefono_escuela', $student->telefono_escuela) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">CORREO ESCUELA</label>
-                            <input type="email" name="correo_escuela" class="form-control bg-light border-0" value="{{ $student->correo_escuela }}">
+                            <input type="email" name="correo_escuela" class="form-control bg-light border-0" value="{{ old('correo_escuela', $student->correo_escuela) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">RESPONSABLE SS ESCUELA</label>
-                            <input type="text" name="responsable_ss_escuela" class="form-control bg-light border-0" value="{{ $student->responsable_ss_escuela }}">
+                            <input type="text" name="responsable_ss_escuela" class="form-control bg-light border-0" value="{{ old('responsable_ss_escuela', $student->responsable_ss_escuela) }}">
                         </div>
                     </div>
                 </div>
@@ -77,59 +95,59 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">APELLIDO PATERNO</label>
-                            <input type="text" name="apellido_paterno" class="form-control bg-light border-0" value="{{ $student->apellido_paterno }}">
+                            <input type="text" name="apellido_paterno" class="form-control bg-light border-0" value="{{ old('apellido_paterno', $student->apellido_paterno) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">APELLIDO MATERNO</label>
-                            <input type="text" name="apellido_materno" class="form-control bg-light border-0" value="{{ $student->apellido_materno }}">
+                            <input type="text" name="apellido_materno" class="form-control bg-light border-0" value="{{ old('apellido_materno', $student->apellido_materno) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">NOMBRE(S)</label>
-                            <input type="text" name="nombre" class="form-control bg-light border-0" value="{{ $student->nombre }}">
+                            <input type="text" name="nombre" class="form-control bg-light border-0" value="{{ old('nombre', $student->nombre) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">NÚMERO DE CUENTA</label>
-                            <input type="text" name="num_cuenta" class="form-control bg-light border-0" value="{{ $student->num_cuenta }}">
+                            <input type="text" name="num_cuenta" class="form-control bg-light border-0" value="{{ old('num_cuenta', $student->num_cuenta) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">REGISTRO ESTATAL SS</label>
-                            <input type="text" name="registro_estatal_ss" class="form-control bg-light border-0" value="{{ $student->registro_estatal_ss }}">
+                            <input type="text" name="registro_estatal_ss" class="form-control bg-light border-0" value="{{ old('registro_estatal_ss', $student->registro_estatal_ss) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">NIVEL</label>
-                            <input type="text" name="nivel" class="form-control bg-light border-0" value="{{ $student->nivel }}">
+                            <input type="text" name="nivel" class="form-control bg-light border-0" value="{{ old('nivel', $student->nivel) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">SEMESTRE</label>
-                            <input type="text" name="semestre" class="form-control bg-light border-0" value="{{ $student->semestre }}">
+                            <input type="text" name="semestre" class="form-control bg-light border-0" value="{{ old('semestre', $student->semestre) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">CARRERA</label>
-                            <input type="text" name="perfil_profesional_carrera" class="form-control bg-light border-0" value="{{ $student->perfil_profesional_carrera }}">
+                            <input type="text" name="perfil_profesional_carrera" class="form-control bg-light border-0" value="{{ old('perfil_profesional_carrera', $student->perfil_profesional_carrera) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">INICIO PERIODO</label>
-                            <input type="text" name="periodo_inicio" class="form-control bg-light border-0" value="{{ $student->periodo_inicio }}">
+                            <input type="text" name="periodo_inicio" class="form-control bg-light border-0" value="{{ old('periodo_inicio', $student->periodo_inicio) }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-bold text-muted small">TÉRMINO PERIODO</label>
-                            <input type="text" name="periodo_termino" class="form-control bg-light border-0" value="{{ $student->periodo_termino }}">
+                            <input type="text" name="periodo_termino" class="form-control bg-light border-0" value="{{ old('periodo_termino', $student->periodo_termino) }}">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label fw-bold text-muted small">SEXO</label>
-                            <input type="text" name="sexo" class="form-control bg-light border-0" value="{{ $student->sexo }}">
+                            <input type="text" name="sexo" class="form-control bg-light border-0" value="{{ old('sexo', $student->sexo) }}">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label fw-bold text-muted small">EDAD</label>
-                            <input type="number" name="edad" class="form-control bg-light border-0" value="{{ $student->edad }}">
+                            <input type="number" name="edad" class="form-control bg-light border-0" value="{{ old('edad', $student->edad) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">PROMEDIO</label>
-                            <input type="text" name="promedio" class="form-control bg-light border-0" value="{{ $student->promedio }}">
+                            <input type="text" name="promedio" class="form-control bg-light border-0" value="{{ old('promedio', $student->promedio) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">% CUBIERTO PLAN</label>
-                            <input type="text" name="porcentaje_cubierto_plan" class="form-control bg-light border-0" value="{{ $student->porcentaje_cubierto_plan }}">
+                            <input type="text" name="porcentaje_cubierto_plan" class="form-control bg-light border-0" value="{{ old('porcentaje_cubierto_plan', $student->porcentaje_cubierto_plan) }}">
                         </div>
                     </div>
                 </div>
@@ -141,39 +159,39 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label fw-bold text-muted small">DEPENDENCIA RECEPTORA</label>
-                            <input type="text" name="nombre_dependencia_receptora" class="form-control bg-light border-0" value="{{ $student->nombre_dependencia_receptora }}">
+                            <input type="text" name="nombre_dependencia_receptora" class="form-control bg-light border-0" value="{{ old('nombre_dependencia_receptora', $student->nombre_dependencia_receptora) }}">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-bold text-muted small">DIRECCIÓN DEPENDENCIA</label>
-                            <input type="text" name="direccion_dependencia" class="form-control bg-light border-0" value="{{ $student->direccion_dependencia }}">
+                            <input type="text" name="direccion_dependencia" class="form-control bg-light border-0" value="{{ old('direccion_dependencia', $student->direccion_dependencia) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">MUNICIPIO DEPENDENCIA</label>
-                            <input type="text" name="municipio_dependencia" class="form-control bg-light border-0" value="{{ $student->municipio_dependencia }}">
+                            <input type="text" name="municipio_dependencia" class="form-control bg-light border-0" value="{{ old('municipio_dependencia', $student->municipio_dependencia) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">SECTOR</label>
-                            <input type="text" name="sector" class="form-control bg-light border-0" value="{{ $student->sector }}">
+                            <input type="text" name="sector" class="form-control bg-light border-0" value="{{ old('sector', $student->sector) }}">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-bold text-muted small">RESPONSABLE DEPENDENCIA</label>
-                            <input type="text" name="nombre_responsable_dependencia" class="form-control bg-light border-0" value="{{ $student->nombre_responsable_dependencia }}">
+                            <input type="text" name="nombre_responsable_dependencia" class="form-control bg-light border-0" value="{{ old('nombre_responsable_dependencia', $student->nombre_responsable_dependencia) }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-muted small">HORARIO SERVICIO</label>
-                            <input type="text" name="horario_servicio" class="form-control bg-light border-0" value="{{ $student->horario_servicio }}">
+                            <input type="text" name="horario_servicio" class="form-control bg-light border-0" value="{{ old('horario_servicio', $student->horario_servicio) }}">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-bold text-muted small">PROYECTO EN EL QUE PARTICIPA</label>
-                            <input type="text" name="proyecto_participa" class="form-control bg-light border-0" value="{{ $student->proyecto_participa }}">
+                            <input type="text" name="proyecto_participa" class="form-control bg-light border-0" value="{{ old('proyecto_participa', $student->proyecto_participa) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">¿CON O SIN BECA?</label>
-                            <input type="text" name="ss_con_o_sin_beca" class="form-control bg-light border-0" value="{{ $student->ss_con_o_sin_beca }}">
+                            <input type="text" name="ss_con_o_sin_beca" class="form-control bg-light border-0" value="{{ old('ss_con_o_sin_beca', $student->ss_con_o_sin_beca) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">MONTO ESTIMULO (Opcional)</label>
-                            <input type="text" name="monto_estimulo" class="form-control bg-light border-0" value="{{ $student->monto_estimulo }}">
+                            <input type="text" name="monto_estimulo" class="form-control bg-light border-0" value="{{ old('monto_estimulo', $student->monto_estimulo) }}">
                         </div>
                     </div>
                 </div>
@@ -185,19 +203,19 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">¿HABLA LENGUA INDÍGENA?</label>
-                            <input type="text" name="habla_lengua_indigena" class="form-control bg-light border-0" value="{{ $student->habla_lengua_indigena }}">
+                            <input type="text" name="habla_lengua_indigena" class="form-control bg-light border-0" value="{{ old('habla_lengua_indigena', $student->habla_lengua_indigena) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">¿CUÁL LENGUA?</label>
-                            <input type="text" name="cual_lengua" class="form-control bg-light border-0" value="{{ $student->cual_lengua }}">
+                            <input type="text" name="cual_lengua" class="form-control bg-light border-0" value="{{ old('cual_lengua', $student->cual_lengua) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">¿TIENE DISCAPACIDAD?</label>
-                            <input type="text" name="tiene_discapacidad" class="form-control bg-light border-0" value="{{ $student->tiene_discapacidad }}">
+                            <input type="text" name="tiene_discapacidad" class="form-control bg-light border-0" value="{{ old('tiene_discapacidad', $student->tiene_discapacidad) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted small">¿CUÁL DISCAPACIDAD?</label>
-                            <input type="text" name="cual_discapacidad" class="form-control bg-light border-0" value="{{ $student->cual_discapacidad }}">
+                            <input type="text" name="cual_discapacidad" class="form-control bg-light border-0" value="{{ old('cual_discapacidad', $student->cual_discapacidad) }}">
                         </div>
                     </div>
                 </div>
